@@ -38,19 +38,19 @@ public class CSModel {
                 dialog.setTitle("[JAP – Computer Science]");
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 dialog.setResizable(false);
-                dialog.setSize(440, 180);
+                dialog.setSize(460, 180);
                 dialog.setLayout(null); // Set layout to null
 
                 // Create a label
                 JLabel lbLogo = new JLabel("");
                 lbLogo.setIcon(new ImageIcon("src/resources/CSmin.png"));
-                lbLogo.setBounds(55, 10, 120, 100); // Set position and size
+                lbLogo.setBounds(40, 10, 120, 100); // Set position and size
                 dialog.add(lbLogo);
 
                 // Create a drop down menu with ComboBox
-                String[] assignments = {"[A12]CA – Cellular Automata", 
-                		"[A22]GL – Game of Life", "[A32]TM – Turning Machine", 
-                		"[A32] – TM Client"};
+                String[] assignments = {"[A12]CA - Cellular Automata", 
+                		"[A22]GL - Game of Life", "[A32]TM - Turning Machine", 
+                		"[A32] - TM Client"};
                 JComboBox<String> cbAssignments = new JComboBox<>(assignments);
                 cbAssignments.setBounds(175, 50, 230, 20); // Set position and size of comboBox cbAssignments
                 dialog.add(cbAssignments);
@@ -107,9 +107,9 @@ public class CSModel {
                 });
 
                 // Set positions and sizes for the buttons
-                okButton.setBounds(75, 100, 100, 30);
-                cancelButton.setBounds(175, 100, 100, 30);
-                helpButton.setBounds(275, 100, 100, 30);
+                okButton.setBounds(82, 100, 80, 30);
+                cancelButton.setBounds(190, 100, 80, 30);
+                helpButton.setBounds(300, 100, 80, 30);
 
                 // Add buttons to the dialog
                 dialog.add(okButton);
