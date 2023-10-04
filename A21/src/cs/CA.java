@@ -34,6 +34,7 @@ import java.util.Properties;
  * Purpose: GUI, logic and calculations for the CA program
  * 
  * @author Vicente Mba Engung
+ * @author Ken Dekpor
  * @version 1.0
  * @see cs
  * @since (4.29.0)
