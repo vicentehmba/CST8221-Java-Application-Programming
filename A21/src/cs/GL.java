@@ -56,7 +56,8 @@ public class GL extends JPanel {
 
         // Create a label for the header panel
         JLabel lbLogo = new JLabel();
-        lbLogo.setText("Hello World");
+        lbLogo.setText("");
+        lbLogo.setIcon(new ImageIcon("./src/resources/GL_Logo.png"));
         headerPanel.add(lbLogo);
         
         
