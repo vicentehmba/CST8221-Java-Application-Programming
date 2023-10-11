@@ -7,6 +7,7 @@
  * Date: October 1, 2023.
  * Compiler: Eclipse IDE for Java Developers – Version: 2023-09 (4.29.0)
  * Purpose: Source code for the startup menu screen
+ * Hello World
  */
 
 package cs;
