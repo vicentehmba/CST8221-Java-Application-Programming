@@ -1,147 +1,217 @@
-package cs;
+package gameoflife;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+
+import org.apache.derby.shared.common.error.PublicAPI;
 
 import java.awt.*;
-import java.io.Serial;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Objects;
+import java.util.Random;
 
+
+
+public class GameView {
+
+    private JFrame mainFrame;
+    private JMenuBar menuBar;
+    private JPanel gamePanel, controlPanel;
+    private JButton randomBtn, manualBtn, multicolorBtn, colorBtn, startBtn, execBtn, stopBtn;
+    private JTextField modelTextField, stepsTextField;
+    private JLabel gameLabel;
+    private GameModel gameModel;
+    private final Color[] selectedColors = new Color[9];
+
+    public GameView() {
+        this.gameModel =new GameModel(50);
+        mainFrame = new JFrame("Game of Life");
+        menuBar = new JMenuBar();
+        gamePanel = new JPanel(new GridLayout(gameModel.getDimension(), gameModel.getDimension())); // Setting GridLayout for equal sizing of buttons
+        controlPanel = new JPanel();
+        initializeUI();
+
+    }
+
+
+    public void showGUI() {
+        mainFrame.setVisible(true);
+    }
+    private ImageIcon resizeIcon(String path, int width, int height) {
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource(path));
+        Image resizedImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
+    }
+
+    private void showColorByNeighbourhoodDialog() {
+        JDialog colorDialog = new JDialog(mainFrame, "Color by Neighbourhood", true);
+        colorDialog.setLayout(new GridLayout(3, 3));
+
+        for (int i = 0; i <= 8; i++) {
+            JButton colorButton = new JButton(String.valueOf(i));
+            colorButton.setBackground(selectedColors[i]);
+            colorButton.addActionListener(e -> {
+                Color newColor = JColorChooser.showDialog(colorDialog, "Choose Color", ((JButton) e.getSource()).getBackground());
+                if (newColor != null) {
+                    ((JButton) e.getSource()).setBackground(newColor);
+                    selectedColors[Integer.parseInt(((JButton) e.getSource()).getText())] = newColor;
+                }
+            });
+            colorDialog.add(colorButton);
+        }
+
+        colorDialog.pack();
+        colorDialog.setLocationRelativeTo(mainFrame);
+        colorDialog.setVisible(true);
+    }
+
+
+    private void initializeUI() {
+        menuBar.add(new JMenu("Game"));
+        menuBar.add(new JMenu("Language"));
+        menuBar.add(new JMenu("Help"));
+        mainFrame.setJMenuBar(menuBar);
 /**
- * A simple Java Swing application for Game of Life.
+ * Game menu
  */
-public class GL extends JPanel {
-    @Serial
-    private static final long serialVersionUID = 1L;
+        JMenu gameMenu = menuBar.getMenu(0);
+        ImageIcon newGameIcon = resizeIcon("/newgame.gif", 20, 20);
+        JMenuItem newGameMenuItem = new JMenuItem("New Game", newGameIcon);
+        newGameMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-    /**
-     * Creates a new GameOfLife panel.
-     *
-     * @param rows    The number of rows in the grid.
-     * @param columns The number of columns in the grid.
-     */
-    public GL(int rows, int columns) {
-        // Create a blank Game of Life grid
-    }
+            }
+        });
+        ImageIcon solutionIcon = resizeIcon("/solution.gif", 20, 20);
+        JMenuItem solutionMenuItem = new JMenuItem("Solution", solutionIcon);
+        solutionMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-    /**
-     * Create the GUI and show it on the Event Dispatch Thread.
-     */
-    static void createAndShowGUI() {
-    	// Number of rows and columns for the Game of Life grid
-        int rows = 50;
-        int columns = 50;
+            }
+        });
 
-        // Create the main application window
-        JFrame frame = new JFrame("Game of Life");
-        frame.setLayout(new BorderLayout());
-        
-        // Create a menu bar
-        JMenuBar menu = new JMenuBar();
-        menu.setVisible(true);
-        frame.add(menu);
+        ImageIcon exitIcon = resizeIcon("/exit.gif", 20, 20);
+        JMenuItem exitMenuItem = new JMenuItem("Exit", exitIcon);
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
-        // Create a header panel at the top of the window
-        JPanel headerPanel = new JPanel();
-        frame.add(headerPanel, BorderLayout.NORTH);
-        
-        // Create menu items
-        JMenuItem game = new JMenuItem("Game");
-        menu.add(game);
-        
-        JMenuItem languages = new JMenuItem("Languages");
-        menu.add(languages);
-        
-        JMenuItem help = new JMenuItem("Help");
-        menu.add(help);
 
-        // Create a label for the header panel
-        JLabel lbLogo = new JLabel();
-        lbLogo.setText("");
-        lbLogo.setIcon(new ImageIcon("./src/resources/GL_Logo.png"));
-        headerPanel.add(lbLogo);
-        
-        
+        gameMenu.add(newGameMenuItem);
+        gameMenu.add(solutionMenuItem);
+        gameMenu.add(exitMenuItem);
+        /**
+         * language menu
+         */
+        JMenu languageMenu = menuBar.getMenu(1);
 
-        // Create a footer panel at the bottom of the window
-        JPanel footerPanel = new JPanel();
-        footerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        frame.add(footerPanel, BorderLayout.SOUTH);
+        JMenuItem englishMenuItem = new JMenuItem("English");
+        languageMenu.add(englishMenuItem);
 
-        // Create buttons and components for the footer panel
-        JButton btnRandom = new JButton();
-        btnRandom.setText("Random");
+        JMenuItem persianMenuItem = new JMenuItem("Persian");
+        languageMenu.add(persianMenuItem);
+        /**
+         *  Help menu
+         */
+        JMenu helpMenu = menuBar.getMenu(2);
 
-        JButton btnManual = new JButton();
-        btnManual.setText("Manual");
+        ImageIcon colorsIcon = resizeIcon("/colors.gif", 20, 20);
+        JMenuItem colorsMenuItem = new JMenuItem("Colors", colorsIcon);
+        helpMenu.add(colorsMenuItem);
 
-        JLabel lbModel = new JLabel();
-        lbModel.setText("Model:");
+        //JMenu helpMenu = new JMenu("Help");
+        //  JMenuItem colorsMenuItem = new JMenuItem("Colors");
+        colorsMenuItem.addActionListener(e -> showColorByNeighbourhoodDialog());
+        helpMenu.add(colorsMenuItem);
+        menuBar.add(helpMenu);
 
-        JTextField txtModel = new JTextField(18);
+        ImageIcon aboutIcon = resizeIcon("/about.gif", 20, 20);
+        JMenuItem aboutMenuItem = new JMenuItem("About", aboutIcon);
+        helpMenu.add(aboutMenuItem);
 
-        JCheckBox cbCheck = new JCheckBox();
-
-        JLabel lbMultiColor = new JLabel();
-        lbMultiColor.setText("Multicolor");
-
-        JButton btnColor = new JButton();
-        btnColor.setText("Color");
-
-        // Add buttons and components to the footer panel
-        footerPanel.add(btnRandom);
-        footerPanel.add(btnManual);
-        footerPanel.add(lbModel);
-        footerPanel.add(txtModel);
-        footerPanel.add(cbCheck);
-        footerPanel.add(lbMultiColor);
-        footerPanel.add(btnColor);
-
-        // Create an additional control panel
-        JPanel additionalControlPanel = new JPanel();
-        additionalControlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
-        // Create buttons and components for the additional control panel
-        JButton btnStart = new JButton();
-        btnStart.setText("Start");
-
-        JLabel lbSteps = new JLabel();
-        lbSteps.setText("Steps:");
-
-        JTextField txtSteps = new JTextField(4);
-
-        JLabel lbExec = new JLabel();
-        lbExec.setText("\t\tExecutions: 0\t\t");
-
-        Border border = BorderFactory.createLineBorder(Color.BLACK);
-        lbExec.setBorder(border);
-
-        JButton btnStop = new JButton();
-        btnStop.setText("Stop");
-
-        // Add buttons and components to the additional control panel
-        additionalControlPanel.add(btnStart);
-        additionalControlPanel.add(lbSteps);
-        additionalControlPanel.add(txtSteps);
-        additionalControlPanel.add(lbExec);
-        additionalControlPanel.add(btnStop);
-
-        // Create a control panel to stack footerPanel and additionalControlPanel vertically
-        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-        controlPanel.add(footerPanel);
-        controlPanel.add(additionalControlPanel);
+        JPanel topPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
 
-        // Add the control panel to the main frame
-        frame.add(controlPanel, BorderLayout.SOUTH);
+        // gameLabel = new JLabel("GAME OF LIFE");
+        //  gameLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        // gameLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        // Create the GameOfLife panel
-        GL gamePanel = new GL(rows, columns);
-        frame.add(gamePanel);
-        frame.setSize(650, 650);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Display the main window
-        frame.setVisible(true);
+
+        randomBtn = new JButton("Random");
+        manualBtn = new JButton("Manual");
+        modelTextField = new JTextField(15);
+        multicolorBtn = new JButton("Multicolor");
+        colorBtn = new JButton("Color");
+
+        topPanel.add(randomBtn);
+        topPanel.add(manualBtn);
+        topPanel.add(new JLabel("Model:"));
+        topPanel.add(modelTextField);
+        topPanel.add(multicolorBtn);
+        topPanel.add(colorBtn);
+
+        startBtn = new JButton("Start");
+        stepsTextField = new JTextField(5);
+        execBtn = new JButton("Exec-c");
+        stopBtn = new JButton("Stop");
+
+        bottomPanel.add(startBtn);
+        bottomPanel.add(new JLabel("Steps:"));
+        bottomPanel.add(stepsTextField);
+        bottomPanel.add(execBtn);
+        bottomPanel.add(stopBtn);
+
+        controlPanel.add(topPanel);
+        controlPanel.add(bottomPanel);
+
+        mainFrame.setLayout(new BorderLayout());
+        try {
+            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/logo.png")));
+            JLabel gameLabel = new JLabel();
+            Image image = icon.getImage();
+            Image newImage = image.getScaledInstance(550, 40, java.awt.Image.SCALE_SMOOTH);
+            icon = new ImageIcon(newImage);
+            gameLabel.setIcon(icon);
+            mainFrame.add(gameLabel, BorderLayout.NORTH);
+        } catch (Exception e) {
+            System.out.print(e);
+        }
+        mainFrame.add(gamePanel, BorderLayout.CENTER);
+        mainFrame.add(controlPanel, BorderLayout.SOUTH);
+
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(550, 600);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
     }
+    public JButton getRandomBtn() {
+        return randomBtn;
+    }
+
+    public JButton getStartBtn() {
+        return startBtn;
+    }
+
+    public JTextField getStepsField() {
+        return stepsTextField;
+    }
+
+    public JTextField getModelTextField() {
+        return modelTextField;
+    }
+
+    public JPanel getGamePanel() {
+        return gamePanel;
+    }
+
+
+
 }
+
