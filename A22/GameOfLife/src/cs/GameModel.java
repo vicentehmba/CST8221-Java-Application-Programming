@@ -164,6 +164,10 @@ class GameModel {
         }
     }
 
+    public void setupCustomlConfiguration() {
+        
+    }
+
     /**
      * Advances the game by one generation based on the rules of the game.
      */

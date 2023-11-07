@@ -80,6 +80,7 @@ class GameView {
         frame.setSize(580, 708);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
+        frame.setBackground(null);
 
         // Create a menu bar
         menuBar = new JMenuBar();
@@ -134,13 +135,13 @@ class GameView {
         randomButton = new JButton("Random");
         manualButton = new JButton("Manual");
         modelLabel = new JLabel("Model:");
-        modelTextField = new JTextField(14);
+        modelTextField = new JTextField("000100000001100000", 14);
         validatCheckBox = new JCheckBox();
         multicolorLabel = new JLabel("Multicolor");
         colorButton = new JButton("Color");
         playButton = new JButton("Play");
         stepsLabel = new JLabel("Steps:");
-        stepsTextField = new JTextField(5);
+        stepsTextField = new JTextField("200", 5);
 
         generationLabel = new JLabel(" Generations: " + model.getGeneration() + " ");
         Border border = BorderFactory.createLineBorder(Color.BLACK);
