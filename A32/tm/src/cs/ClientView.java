@@ -24,7 +24,7 @@ public class ClientView {
     JFrame frame = new JFrame("Turing Machine Client");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(560, 320);
-    //frame.setResizable(false);
+    frame.setResizable(false);
 
     // Header Panel
     JPanel headerPanel = new JPanel();
