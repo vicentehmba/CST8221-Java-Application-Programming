@@ -13,246 +13,276 @@
 
 package cs;
 
-import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
+import javax.swing.border.Border;
 
 /**
  * The GameView class defines the user interface for the Game of Life application.
  */
 class GameView {
-    protected GameModel model;
-    protected JFrame frame;
-    protected GamePanel gamePanel;
-    protected JButton randomButton;
-    protected JButton manualButton;
-    protected JLabel modelLabel;
-    protected JTextField modelTextField;
-    protected JCheckBox validatCheckBox;
-    protected JLabel multicolorLabel;
-    protected JButton colorButton;
-    protected JButton playButton;
-    protected JLabel generationLabel;
-    protected GameController controller;
-    protected int cellSize = 8;
-    protected JMenuBar menuBar;
-    protected JMenu gameMenu;
-    protected JMenuItem subMenuNew;
-    protected JMenuItem subMenuSolution;
-    protected JMenuItem subMenuExit;
-    protected JMenu languagesMenu;
-    protected JMenuItem subMenuEnglish;
-    protected JMenuItem subMenuFrench;
-    protected JMenu helpMenu;
-    protected JMenuItem subMenuColor;
-    protected JMenuItem subMenuAbout;
-    protected JLabel stepsLabel;
-    protected JTextField stepsTextField;
 
-    /**
-     * Creates a new GameView with the specified GameModel.
-     *
-     * @param model The GameModel to associate with the view.
-     */
-    public GameView(GameModel model) {
-        this.model = model;
-    }
+  protected GameModel model;
+  protected JFrame frame;
+  protected GamePanel gamePanel;
+  protected JButton randomButton;
+  protected JButton manualButton;
+  protected JLabel modelLabel;
+  protected JTextField modelTextField;
+  protected JCheckBox validatCheckBox;
+  protected JLabel multicolorLabel;
+  protected JButton colorButton;
+  protected JButton playButton;
+  protected JLabel generationLabel;
+  protected GameController controller;
+  protected int cellSize = 8;
+  protected JMenuBar menuBar;
+  protected JMenu gameMenu;
+  protected JMenuItem subMenuNew;
+  protected JMenuItem subMenuSolution;
+  protected JMenuItem subMenuExit;
+  protected JMenu languagesMenu;
+  protected JMenuItem subMenuEnglish;
+  protected JMenuItem subMenuFrench;
+  protected JMenu helpMenu;
+  protected JMenuItem subMenuColor;
+  protected JMenuItem subMenuAbout;
+  protected JLabel stepsLabel;
+  protected JTextField stepsTextField;
 
-    /**
-     * Sets the controller for this view.
-     *
-     * @param controller The GameController to associate with the view.
-     */
-    public void setController(GameController controller) {
-        this.controller = controller;
-    }
+  /**
+   * Creates a new GameView with the specified GameModel.
+   *
+   * @param model The GameModel to associate with the view.
+   */
+  public GameView(GameModel model) {
+    this.model = model;
+  }
 
-    /**
-     * Creates and displays the user interface for the Game of Life application.
-     */
-    public void createAndShowGUI() {
-        frame = new JFrame("Game of Life");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(580, 708);
-        frame.setResizable(false);
-        frame.setLayout(new BorderLayout());
-        frame.setBackground(null);
+  /**
+   * Sets the controller for this view.
+   *
+   * @param controller The GameController to associate with the view.
+   */
+  public void setController(GameController controller) {
+    this.controller = controller;
+  }
 
-        // Create a menu bar
-        menuBar = new JMenuBar();
-        frame.setJMenuBar(menuBar); // Set the menu bar for the frame
+  /**
+   * Creates and displays the user interface for the Game of Life application.
+   */
+  public void createAndShowGUI() {
+    frame = new JFrame("Game of Life");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(580, 708);
+    frame.setResizable(false);
+    frame.setLayout(new BorderLayout());
+    frame.setBackground(null);
 
-        // Create menu items
-        gameMenu = new JMenu("Game");
-        subMenuNew = new JMenuItem("New");
-        subMenuNew.setIcon(new ImageIcon("src/resources/menuiconnew.gif")); // Load and set the icon
-        gameMenu.add(subMenuNew);
+    // Create a menu bar
+    menuBar = new JMenuBar();
+    frame.setJMenuBar(menuBar); // Set the menu bar for the frame
 
-        subMenuSolution = new JMenuItem("Solution");
-        subMenuSolution.setIcon(new ImageIcon("src/resources/menuiconsol.gif")); // Load and set the icon
-        gameMenu.add(subMenuSolution);
+    // Create menu items
+    gameMenu = new JMenu("Game");
+    subMenuNew = new JMenuItem("New");
+    subMenuNew.setIcon(new ImageIcon("src/resources/menuiconnew.gif")); // Load and set the icon
+    gameMenu.add(subMenuNew);
 
-        subMenuExit = new JMenuItem("Exit");
-        subMenuExit.setIcon(new ImageIcon("src/resources/menuiconext.gif")); // Load and set the icon
-        gameMenu.add(subMenuExit);
+    subMenuSolution = new JMenuItem("Solution");
+    subMenuSolution.setIcon(new ImageIcon("src/resources/menuiconsol.gif")); // Load and set the icon
+    gameMenu.add(subMenuSolution);
 
-        languagesMenu = new JMenu("Languages");
-        subMenuEnglish = new JMenuItem("English");
+    subMenuExit = new JMenuItem("Exit");
+    subMenuExit.setIcon(new ImageIcon("src/resources/menuiconext.gif")); // Load and set the icon
+    gameMenu.add(subMenuExit);
 
-        subMenuFrench = new JMenuItem("French");
-        languagesMenu.add(subMenuEnglish);
-        languagesMenu.add(subMenuFrench);
+    languagesMenu = new JMenu("Languages");
+    subMenuEnglish = new JMenuItem("English");
 
-        helpMenu = new JMenu("Help");
-        subMenuColor = new JMenuItem("Color");
-        subMenuColor.setIcon(new ImageIcon("src/resources/menuiconcol.gif")); // Load and set the icon
-        helpMenu.add(subMenuColor);
+    subMenuFrench = new JMenuItem("French");
+    languagesMenu.add(subMenuEnglish);
+    languagesMenu.add(subMenuFrench);
 
-        subMenuAbout = new JMenuItem("About");
-        subMenuAbout.setIcon(new ImageIcon("src/resources/menuiconabt.gif")); // Load and set the icon
-        helpMenu.add(subMenuAbout);
+    helpMenu = new JMenu("Help");
+    subMenuColor = new JMenuItem("Color");
+    subMenuColor.setIcon(new ImageIcon("src/resources/menuiconcol.gif")); // Load and set the icon
+    helpMenu.add(subMenuColor);
 
-        // Add the menus to the menu bar
-        menuBar.add(gameMenu);
-        menuBar.add(languagesMenu);
-        menuBar.add(helpMenu);
+    subMenuAbout = new JMenuItem("About");
+    subMenuAbout.setIcon(new ImageIcon("src/resources/menuiconabt.gif")); // Load and set the icon
+    helpMenu.add(subMenuAbout);
 
-        // Create a header panel at the top of the window
-        JPanel headerPanel = new JPanel();
-        frame.add(headerPanel, BorderLayout.NORTH);
+    // Add the menus to the menu bar
+    menuBar.add(gameMenu);
+    menuBar.add(languagesMenu);
+    menuBar.add(helpMenu);
 
-        // Create a label for the header panel
-        JLabel lbLogo = new JLabel();
-        lbLogo.setText("");
-        lbLogo.setIcon(new ImageIcon("./src/resources/gl.png"));
-        headerPanel.add(lbLogo);
+    // Create a header panel at the top of the window
+    JPanel headerPanel = new JPanel();
+    frame.add(headerPanel, BorderLayout.NORTH);
 
-        gamePanel = new GamePanel(model);
-        randomButton = new JButton("Random");
-        manualButton = new JButton("Manual");
-        modelLabel = new JLabel("Model:");
-        modelTextField = new JTextField("000100000001100000", 14);
-        validatCheckBox = new JCheckBox();
-        multicolorLabel = new JLabel("Multicolor");
-        colorButton = new JButton("Color");
-        playButton = new JButton("Play");
-        stepsLabel = new JLabel("Steps:");
-        stepsTextField = new JTextField("200", 5);
+    // Create a label for the header panel
+    JLabel lbLogo = new JLabel();
+    lbLogo.setText("");
+    lbLogo.setIcon(new ImageIcon("./src/resources/gl.png"));
+    headerPanel.add(lbLogo);
 
-        generationLabel = new JLabel(" Generations: " + model.getGeneration() + " ");
-        Border border = BorderFactory.createLineBorder(Color.BLACK);
-        generationLabel.setBorder(border);
+    gamePanel = new GamePanel(model);
+    randomButton = new JButton("Random");
+    manualButton = new JButton("Manual");
+    modelLabel = new JLabel("Model:");
+    modelTextField = new JTextField("000100000001100000", 14);
+    validatCheckBox = new JCheckBox();
+    multicolorLabel = new JLabel("Multicolor");
+    colorButton = new JButton("Color");
+    playButton = new JButton("Play");
+    stepsLabel = new JLabel("Steps:");
+    stepsTextField = new JTextField("200", 5);
 
-        JPanel footerPanel1 = new JPanel();
-        footerPanel1.add(randomButton);
-        footerPanel1.add(manualButton);
-        footerPanel1.add(playButton);
-        footerPanel1.add(generationLabel);
+    generationLabel =
+      new JLabel(" Generations: " + model.getGeneration() + " ");
+    Border border = BorderFactory.createLineBorder(Color.BLACK);
+    generationLabel.setBorder(border);
 
-        JPanel footerPanel2 = new JPanel();
-        footerPanel2.add(modelLabel);
-        footerPanel2.add(modelTextField);
-        footerPanel2.add(validatCheckBox);
-        footerPanel2.add(multicolorLabel);
-        footerPanel2.add(colorButton);
-        footerPanel2.add(stepsLabel);
-        footerPanel2.add(stepsTextField);
+    JPanel footerPanel1 = new JPanel();
+    footerPanel1.add(randomButton);
+    footerPanel1.add(manualButton);
+    footerPanel1.add(playButton);
+    footerPanel1.add(generationLabel);
 
-        randomButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.setupRandomConfiguration();
-            }
-        });
+    JPanel footerPanel2 = new JPanel();
+    footerPanel2.add(modelLabel);
+    footerPanel2.add(modelTextField);
+    footerPanel2.add(validatCheckBox);
+    footerPanel2.add(multicolorLabel);
+    footerPanel2.add(colorButton);
+    footerPanel2.add(stepsLabel);
+    footerPanel2.add(stepsTextField);
 
-        manualButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.setupManualConfiguration();
-            }
-        });
+    randomButton.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.setupRandomConfiguration();
+        }
+      }
+    );
 
-        playButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.togglePlayMode();
-            }
-        });
+    manualButton.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.setupManualConfiguration();
+        }
+      }
+    );
 
-        validatCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.validatCheckBoxAction();
-            }
-        });
+    playButton.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.togglePlayMode();
+        }
+      }
+    );
 
-        colorButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.colorButtonAction();
-            }
-        });
+    validatCheckBox.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.validatCheckBoxAction();
+        }
+      }
+    );
 
-        subMenuAbout.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.subMenuAboutAction();
-            }
-        });
+    colorButton.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.colorButtonAction();
+        }
+      }
+    );
 
-        subMenuEnglish.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.subMenuEnglishAction();
-            }
-        });
+    subMenuAbout.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.subMenuAboutAction();
+        }
+      }
+    );
 
-        subMenuFrench.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.subMenuFrenchAction();
-            }
-        });
+    subMenuEnglish.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.subMenuEnglishAction();
+        }
+      }
+    );
 
-        subMenuAbout.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+    subMenuFrench.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.subMenuFrenchAction();
+        }
+      }
+    );
 
-            }
-        });
+    subMenuNew.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.subMenuNewAction();
+        }
+      }
+    );
 
-        gamePanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int mouseX = e.getX() / cellSize;
-                int mouseY = e.getY() / cellSize;
-                controller.handleMouseClick(mouseX, mouseY);
-            }
-        });
+    subMenuExit.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          controller.subMenuExitAction();
+        }
+      }
+    );
 
-        // Panel to contain the first set of components
-        footerPanel1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        frame.add(footerPanel1, BorderLayout.SOUTH);
+    gamePanel.addMouseListener(
+      new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+          int mouseX = e.getX() / cellSize;
+          int mouseY = e.getY() / cellSize;
+          controller.handleMouseClick(mouseX, mouseY);
+        }
+      }
+    );
 
-        // Panel to contain the second set of components
-        footerPanel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        frame.add(footerPanel2, BorderLayout.SOUTH);
+    // Panel to contain the first set of components
+    footerPanel1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    frame.add(footerPanel1, BorderLayout.SOUTH);
 
-        // Panel to stack footerPanel1 and footerPanel2 vertically
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-        controlPanel.add(footerPanel1);
-        controlPanel.add(footerPanel2);
+    // Panel to contain the second set of components
+    footerPanel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    frame.add(footerPanel2, BorderLayout.SOUTH);
 
-        // Add the control panel to the main frame
-        frame.add(controlPanel, BorderLayout.SOUTH);
-        // Add the game panel to the main frame
-        frame.add(gamePanel, BorderLayout.CENTER);
+    // Panel to stack footerPanel1 and footerPanel2 vertically
+    JPanel controlPanel = new JPanel();
+    controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+    controlPanel.add(footerPanel1);
+    controlPanel.add(footerPanel2);
 
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
+    // Add the control panel to the main frame
+    frame.add(controlPanel, BorderLayout.SOUTH);
+    // Add the game panel to the main frame
+    frame.add(gamePanel, BorderLayout.CENTER);
 
-    /**
-     * Updates the user interface to reflect changes in the model, such as the current generation.
-     */
-    public void updateUI() {
-        generationLabel.setText(" Generations: " + model.getGeneration() + " ");
-        gamePanel.repaint();
-    }
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+  }
+
+  /**
+   * Updates the user interface to reflect changes in the model, such as the current generation.
+   */
+  public void updateUI() {
+    generationLabel.setText(" Generations: " + model.getGeneration() + " ");
+    gamePanel.repaint();
+  }
 }

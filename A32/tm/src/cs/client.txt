@@ -1,0 +1,143 @@
+package cs;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.*;
+
+public class Client {
+
+  private static JTextField usernameField; // New username field
+  private static JButton connectButton;
+  private static JButton disconnectButton;
+  private static JTextArea logArea;
+  private static JLabel logoLabel;
+  private static JTextField tmField;
+  private static JButton validateButton;
+  private static JButton sendButton;
+  private static JButton receiveButton;
+  private static JButton runButton;
+  private static Socket socket;
+
+  public static void main(String[] args) {
+    JFrame frame = new JFrame("Turing Machine Client");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(560, 310);
+    //frame.setResizable(false);
+
+    //
+    JPanel headerPanel = new JPanel();
+    headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    logoLabel = new JLabel("");
+    logoLabel.setIcon(new ImageIcon("src/A32-resources/tm-client.png"));
+    headerPanel.add(logoLabel);
+
+    //
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    usernameField = new JTextField("User"); // Username field
+    JTextField serverAddressField = new JTextField("localhost");
+    JTextField portField = new JTextField("8080");
+    connectButton = new JButton("Connect");
+    disconnectButton = new JButton("Disconnect");
+    disconnectButton.setEnabled(false);
+    logArea = new JTextArea();
+
+    JScrollPane scrollPane = new JScrollPane(logArea);
+
+    contentPanel.add(new JLabel("User:"));
+    contentPanel.add(usernameField);
+    contentPanel.add(new JLabel("Server:"));
+    contentPanel.add(serverAddressField);
+    contentPanel.add(new JLabel("Port:"));
+    contentPanel.add(portField);
+    contentPanel.add(connectButton);
+    contentPanel.add(disconnectButton);
+
+    //
+    JPanel contentPanelPlus = new JPanel();
+    contentPanelPlus.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    tmField = new JTextField(18);
+    validateButton = new JButton("Validate");
+    sendButton = new JButton("Send");
+    receiveButton = new JButton("Receive");
+    runButton = new JButton("Run");
+
+    contentPanelPlus.add(new JLabel("TM:"));
+    contentPanelPlus.add(tmField);
+    contentPanelPlus.add(validateButton);
+    contentPanelPlus.add(sendButton);
+    contentPanelPlus.add(receiveButton);
+    contentPanelPlus.add(runButton);
+
+    // Main panel
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.add(headerPanel, BorderLayout.NORTH);
+    panel.add(contentPanel, BorderLayout.CENTER);
+    panel.add(contentPanelPlus, BorderLayout.SOUTH);
+
+    frame.getContentPane().add(panel, "North");
+    frame.getContentPane().add(scrollPane, "Center");
+    frame.setVisible(true);
+
+    connectButton.addActionListener(
+      new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          try {
+            String serverAddress = serverAddressField.getText();
+            int port = Integer.parseInt(portField.getText());
+            String username = usernameField.getText(); // Get username
+
+            socket = new Socket(serverAddress, port);
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(username); // Send username to the server
+
+            BufferedReader in = new BufferedReader(
+              new InputStreamReader(socket.getInputStream())
+            );
+            String message = in.readLine();
+            showMessage("Received message from server: " + message);
+
+            connectButton.setEnabled(false);
+            disconnectButton.setEnabled(true);
+          } catch (IOException ex) {
+            ex.printStackTrace();
+            showMessage("Error: " + ex.getMessage());
+          }
+        }
+      }
+    );
+
+    disconnectButton.addActionListener(
+      new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          try {
+            socket.close();
+            showMessage("Disconnected from server.");
+            connectButton.setEnabled(true);
+            disconnectButton.setEnabled(false);
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
+        }
+      }
+    );
+  }
+
+  private static void showMessage(String message) {
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+    String timeStamp = formatter.format(new Date());
+    logArea.append("[" + timeStamp + "] " + message + "\n");
+  }
+}
