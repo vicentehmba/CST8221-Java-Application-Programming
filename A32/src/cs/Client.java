@@ -1,16 +1,19 @@
 /**
- * File Name: CA.java
+ * File Name: Client.java
  * Identification: Vicente Mba Engung 041029226 // Ken Dekpor 041054266
  * Course: CST 8221 – JAP, Lab Section: [300, 302]
- * Assignment: A12
+ * Assignment: A32
  * Professor: Daniel Cormier
- * Date: October 1, 2023.
+ * Date: December 3, 2023.
  * Compiler: Eclipse IDE for Java Developers – Version: 2023-09 (4.29.0)
- * Purpose: Source code for the Cellular Automata
+ * Purpose: Source code for the Client-side
  */
 
 /*
- * References: https://introcs.cs.princeton.edu/java/52turing/
+ * References:
+ * https://introcs.cs.princeton.edu/java/52turing/
+ * https://www.digitalocean.com/community/tutorials/java-socket-programming-server-client
+ * https://www.geeksforgeeks.org/client-server-model/
  */
 
 package cs;
@@ -25,27 +28,62 @@ import javax.swing.*;
 
 public class Client extends JFrame {
 
+  // Unique identifier for serialization
   private static final long serialVersionUID = 1L;
+
+  // Text field for user to enter username
   private static JTextField usernameField;
+
+  // Button to connect to the server
   private static JButton connectButton;
+
+  // Button to disconnect from the server
   private static JButton disconnectButton;
+
+  // Area to display log messages
   private static JTextArea logArea;
+
+  // Label for displaying the logo/icon
   private static JLabel logoLabel;
+
+  // Text field for entering the Turing Machine model
   private static JTextField modelField;
+
+  // Button to validate the entered Turing Machine model
   private static JButton validateButton;
+
+  // Button to send the Turing Machine model to the server
   private static JButton sendButton;
+
+  // Button to receive output from the server
   private static JButton receiveButton;
+
+  // Button to run the Turing Machine on the server
   private static JButton runButton;
+
+  // Text field for entering the port number
   private static JTextField portField;
+
+  // Text field for entering the server address
   private static JTextField serverAddressField;
+
+  // String to store the client initialization message
   private static String clientInit;
+
+  // Flag to track whether an error message has been displayed
   private boolean errorDisplayed = false;
-  private StringBuilder receivedOutput = new StringBuilder(); // Accumulate received Turing Machine output
+
+  // StringBuilder to accumulate received Turing Machine output
+  private StringBuilder receivedOutput = new StringBuilder();
 
   private Socket socket;
   private BufferedReader in;
   private PrintWriter out;
 
+  /**
+   * Constructor for the Client class.
+   * Initializes the GUI and sets up event listeners for buttons.
+   */
   public Client() {
     setTitle("Turing Machine Client");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +94,7 @@ public class Client extends JFrame {
     JPanel headerPanel = new JPanel();
     headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     logoLabel = new JLabel("");
-    logoLabel.setIcon(new ImageIcon("src/A32-resources/tm-client.png"));
+    logoLabel.setIcon(new ImageIcon("src/resources/tm-client.png"));
     headerPanel.add(logoLabel);
 
     // Content Panel
@@ -110,40 +148,42 @@ public class Client extends JFrame {
 
     setVisible(true);
 
-    // Connect
+    // Connect button action
     connectButton.addActionListener(e -> {
       Runnable connectTask = () -> connectToServer();
       Thread connectThread = new Thread(connectTask);
       connectThread.start();
     });
 
-    // Disconnect
+    // Disconnect button action
     disconnectButton.addActionListener(e -> {
       Runnable disconnectTask = () -> disconnectFromServer();
       Thread disconnectThread = new Thread(disconnectTask);
       disconnectThread.start();
     });
 
+    // Validate button action
     validateButton.addActionListener(e -> {
       Runnable validateModelTask = () -> validateModel();
       Thread validateModelThread = new Thread(validateModelTask);
       validateModelThread.start();
     });
 
-    //Send
+    // Send button action
     sendButton.addActionListener(e -> {
       Runnable sendModelTask = () -> sendModelToServer();
       Thread sendModelThread = new Thread(sendModelTask);
       sendModelThread.start();
     });
 
+    // Receive button action
     receiveButton.addActionListener(e -> {
       Runnable receiveModelTask = () -> receiveTuringMachine();
       Thread receiveModelThread = new Thread(receiveModelTask);
       receiveModelThread.start();
     });
 
-    // Run
+    // Run button action
     runButton.addActionListener(e -> {
       Runnable runModelTask = () -> runTuringMachine();
       Thread runModelThread = new Thread(runModelTask);
@@ -157,6 +197,10 @@ public class Client extends JFrame {
     return model.matches("^([01]{5} )*[01]{5}$");
   }
 
+  /**
+   * Validates the entered Turing Machine model.
+   * Displays a message indicating whether the model is valid or not.
+   */
   private void validateModel() {
     String model = modelField.getText().trim();
     if (isValidTMModel(model)) {
@@ -171,6 +215,10 @@ public class Client extends JFrame {
     }
   }
 
+  /**
+   * Connects the client to the server using the specified server address and port.
+   * Handles input and output streams for communication with the server.
+   */
   private void connectToServer() {
     try {
       String serverAddress = serverAddressField.getText();
@@ -207,7 +255,6 @@ public class Client extends JFrame {
       connectButton.setEnabled(false);
       disconnectButton.setEnabled(true);
     } catch (ConnectException e) {
-      // Handle the ConnectException
       logMessage("Connection error: Unable to connect to the server.");
       e.printStackTrace();
     } catch (IOException e) {
@@ -216,6 +263,10 @@ public class Client extends JFrame {
     }
   }
 
+  /**
+   * Disconnects the client from the server.
+   * Closes the socket and input/output streams.
+   */
   private void disconnectFromServer() {
     try {
       if (socket != null && !socket.isClosed()) {
@@ -233,6 +284,10 @@ public class Client extends JFrame {
     }
   }
 
+  /**
+   * Receives the output of the Turing Machine from the server.
+   * Accumulates the received output for display.
+   */
   private void receiveTuringMachine() {
     try {
       if (in != null) {
@@ -251,6 +306,10 @@ public class Client extends JFrame {
     }
   }
 
+  /**
+   * Initiates the execution of the Turing Machine on the server.
+   * Requests the server to run the Turing Machine.
+   */
   private void runTuringMachine() {
     if (out != null && !socket.isClosed()) {
       out.println("RUN"); // Send a request to the server to run the Turing Machine
@@ -263,6 +322,9 @@ public class Client extends JFrame {
     outputTuringMachine();
   }
 
+  /**
+   * Displays the accumulated Turing Machine output in a separate frame.
+   */
   private void outputTuringMachine() {
     JFrame outputFrame = new JFrame("Turing Machine");
     JTextArea outputArea = new JTextArea(10, 40); // Define the size of the text area
@@ -276,6 +338,10 @@ public class Client extends JFrame {
     outputFrame.setVisible(true);
   }
 
+  /**
+   * Sends the Turing Machine model to the server for execution.
+   * Checks if the model is valid before sending.
+   */
   private void sendModelToServer() {
     if (isValidTMModel(modelField.getText())) {
       if (out == null || socket == null || socket.isClosed()) {
@@ -284,7 +350,7 @@ public class Client extends JFrame {
           errorDisplayed = true; // Set the flag to indicate the error was displayed
         }
         return;
-      } else {}
+      }
 
       out.println(modelField.getText());
       logMessage("Turing Machine Model sent to server.");
@@ -298,20 +364,13 @@ public class Client extends JFrame {
     }
   }
 
+  /**
+   * Logs a message with a timestamp in the log area of the client GUI.
+   * @param message The message to be logged.
+   */
   static void logMessage(String message) {
     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     String timeStamp = formatter.format(new Date());
     logArea.append("[" + timeStamp + "] " + message + "\n");
-  }
-
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(
-      new Runnable() {
-        public void run() {
-          Client clientGUI = new Client();
-          clientGUI.setVisible(true);
-        }
-      }
-    );
   }
 }

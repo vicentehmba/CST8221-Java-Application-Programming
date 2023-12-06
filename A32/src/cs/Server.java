@@ -1,16 +1,19 @@
 /**
- * File Name: CA.java
+ * File Name: Server.java
  * Identification: Vicente Mba Engung 041029226 // Ken Dekpor 041054266
  * Course: CST 8221 – JAP, Lab Section: [300, 302]
- * Assignment: A12
+ * Assignment: A32
  * Professor: Daniel Cormier
- * Date: October 1, 2023.
+ * Date: December 3, 2023.
  * Compiler: Eclipse IDE for Java Developers – Version: 2023-09 (4.29.0)
- * Purpose: Source code for the Cellular Automata
+ * Purpose: Source code for the Server-side
  */
 
 /*
- * References: https://introcs.cs.princeton.edu/java/52turing/
+ * References:
+ * https://introcs.cs.princeton.edu/java/52turing/
+ * https://www.digitalocean.com/community/tutorials/java-socket-programming-server-client
+ * https://www.geeksforgeeks.org/client-server-model/
  */
 
 package cs;
@@ -27,25 +30,60 @@ import javax.swing.*;
 
 public class Server extends JFrame {
 
+  // Unique identifier for serialization
   private static final long serialVersionUID = 1L;
+
+  // Default port number for the server
   private static int DEFAULT_PORT = 12345;
+
+  // Server socket to listen for incoming connections
   private static ServerSocket serverSocket;
+
+  // Label for displaying the logo/icon
   private static JLabel logoLabel;
+
+  // Text field for entering the port number
   private static JTextField portField;
+
+  // Button to start the server
   private static JButton startButton;
+
+  // Button to stop the server
   private static JButton stopButton;
+
+  // Button to manage the model on the server
   private static JButton modelButton;
+
+  // Checkbox to indicate finalization for server shutdown
   private static JCheckBox finalizeCheckBox;
+
+  // Area to display log messages
   private static JTextArea logArea;
+
+  // Message indicating server initialization status
   private static String serverInit;
+
+  // Number of connected clients to the server
   private static int connectedClients;
+
+  // Map to store client connections with their PrintWriter
   private static Map<String, PrintWriter> clientMap = new HashMap<>();
+
+  // Flag indicating whether the server is running or not
   private static volatile boolean isServerRunning = false;
+
+  // Model received from the client
   private static String receivedModel;
+
+  // Default tape configuration for the Turing Machine
   static String defaultTape = "0000000000000000000000000";
 
+  /**
+   * Constructor for the Server class.
+   * Initializes the GUI and sets up event listeners for buttons.
+   */
   public Server() {
-    setTitle("Turing Machine Sever1");
+    setTitle("Turing Machine Server");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(560, 280);
     setResizable(false);
@@ -53,7 +91,7 @@ public class Server extends JFrame {
     JPanel headerPanel = new JPanel();
     headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     logoLabel = new JLabel("");
-    logoLabel.setIcon(new ImageIcon("src/A32-resources/tm-server.png"));
+    logoLabel.setIcon(new ImageIcon("src/resources/tm-server.png"));
     headerPanel.add(logoLabel);
 
     JPanel contentPanel = new JPanel();
@@ -91,9 +129,10 @@ public class Server extends JFrame {
     stopButton.addActionListener(e -> stopServer());
     stopButton.setEnabled(false);
 
-    serverInit = "Sever1 initialized...";
+    serverInit = "Server initialized...";
     logMessage(serverInit);
 
+    setLocationRelativeTo(null);
     setVisible(true);
 
     modelButton.addActionListener(e -> {
@@ -105,10 +144,10 @@ public class Server extends JFrame {
     });
   }
 
-  public static void main(String[] args) {
-    new Server();
-  }
-
+  /**
+   * Starts the server on a specified port.
+   * Accepts incoming client connections and handles them in separate threads.
+   */
   private void startServer() {
     try {
       int port = Integer.parseInt(portField.getText());
@@ -121,7 +160,7 @@ public class Server extends JFrame {
       }
 
       serverSocket = new ServerSocket(port);
-      logMessage("Sever1 running on port: " + port);
+      logMessage("Server running on port: " + port);
       startButton.setEnabled(false);
       stopButton.setEnabled(true);
 
@@ -149,16 +188,19 @@ public class Server extends JFrame {
     }
   }
 
+  /**
+   * Stops the server by closing the server socket and handling client disconnections.
+   */
   private static void stopServer() {
     try {
       isServerRunning = false; // Set flag to stop accepting new connections
       if (serverSocket != null) {
         serverSocket.close();
-        logMessage("Sever1 stopped.");
+        logMessage("Server stopped.");
         stopButton.setEnabled(false);
         startButton.setEnabled(true);
       } else {
-        logMessage("Sever1 stopped due to no clients remaining.");
+        logMessage("Server stopped due to no clients remaining.");
         startButton.setEnabled(true); // Enable start button after stopping the server
         stopButton.setEnabled(false); // Disable stop button after stopping the server
       }
@@ -167,12 +209,20 @@ public class Server extends JFrame {
     }
   }
 
+  /**
+   * Checks if the finalize checkbox is selected and no clients are connected, then stops the server.
+   */
   public static void checkFinalizeStatus() {
     if (finalizeCheckBox.isSelected() && clientMap.isEmpty()) {
       stopServer(); // Call a method to stop the server
     }
   }
 
+  /**
+   * Handles communication with a connected client.
+   * Reads client data, performs Turing Machine operations, and manages client disconnections.
+   * @param clientSocket The socket connected to the client.
+   */
   private static void handleClient(Socket clientSocket) {
     try {
       BufferedReader in = new BufferedReader(
@@ -224,6 +274,12 @@ public class Server extends JFrame {
     }
   }
 
+  /**
+   * Performs Turing Machine operations based on the received model.
+   * Executes the Turing Machine and returns the simulation result.
+   * @param model The model received from the client.
+   * @return The result of the Turing Machine simulation.
+   */
   private static String TuringMachineOperations(String model) {
     Server.TuringMachine tm = new Server.TuringMachine(
       defaultTape,
@@ -315,6 +371,10 @@ public class Server extends JFrame {
     return clientMap;
   }
 
+  /**
+   * Logs a message with a timestamp in the log area of the client GUI.
+   * @param message The message to be logged.
+   */
   static void logMessage(String disconnectMessage) {
     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     String timeStamp = formatter.format(new Date());
@@ -336,6 +396,10 @@ public class Server extends JFrame {
     return transitions;
   }
 
+  /**
+   * Represents a Turing Machine for simulating computations based on a provided model.
+   * This nested static class defines the functionality for creating and executing a Turing Machine.
+   */
   static class TuringMachine {
 
     private char[] tape;
