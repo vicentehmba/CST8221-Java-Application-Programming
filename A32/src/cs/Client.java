@@ -94,7 +94,7 @@ public class Client extends JFrame {
     JPanel headerPanel = new JPanel();
     headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     logoLabel = new JLabel("");
-    logoLabel.setIcon(new ImageIcon("src/resources/tm-client.png"));
+    logoLabel.setIcon(new ImageIcon("resources/tm-client.png"));
     headerPanel.add(logoLabel);
 
     // Content Panel

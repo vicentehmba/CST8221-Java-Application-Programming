@@ -91,7 +91,7 @@ public class Server extends JFrame {
     JPanel headerPanel = new JPanel();
     headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
     logoLabel = new JLabel("");
-    logoLabel.setIcon(new ImageIcon("src/resources/tm-server.png"));
+    logoLabel.setIcon(new ImageIcon("resources/tm-server.png"));
     headerPanel.add(logoLabel);
 
     JPanel contentPanel = new JPanel();
